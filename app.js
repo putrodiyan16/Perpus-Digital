@@ -1,11 +1,10 @@
-// Kita panggil langsung dari window karena menggunakan CDN di index.html
+// Memanggil library Supabase dari window (karena pakai CDN di HTML)
 const { createClient } = window.supabase;
 
-// Ambil URL dan Key dari Environment Variables Netlify
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Masukkan URL dan Key kamu secara langsung (Hardcoded)
+const supabaseUrl = 'https://vdkjyvdfddybtmyytqdx.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZka2p5dmRmZGR5YnRteXl0cWR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MzE1MjUsImV4cCI6MjA5MjUwNzUyNX0.jT72qRw6-AbO4vTZb5P5H7rOPZLYhOrkKcRHSfSc5wI';
 
-// Buat koneksi
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const btnSimpan = document.getElementById('btnSimpan');
@@ -17,11 +16,11 @@ btnSimpan.addEventListener('click', async () => {
     const kelas = inputKelas.value;
 
     if (!nama || !kelas) {
-        alert("Mohon isi Nama dan Kelas!");
+        alert("Nama dan Kelas tidak boleh kosong!");
         return;
     }
 
-    console.log("Mencoba mengirim data..."); // Cek di console browser
+    console.log("Sedang mencoba mengirim data ke Supabase...");
 
     const { data, error } = await supabase
         .from('Perpus uji 1')
@@ -33,11 +32,11 @@ btnSimpan.addEventListener('click', async () => {
         ]);
 
     if (error) {
-        console.error('Error detail:', error);
-        alert('Gagal: ' + error.message);
+        console.error('Ada Error:', error.message);
+        alert('Gagal simpan: ' + error.message);
     } else {
-        console.log('Hasil:', data);
-        alert('Data siswa berhasil disimpan!');
+        console.log('Berhasil:', data);
+        alert('Data ' + nama + ' berhasil masuk ke Supabase!');
         inputNama.value = '';
         inputKelas.value = '';
     }
