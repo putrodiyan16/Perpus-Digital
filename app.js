@@ -1,4 +1,3 @@
-// Kita ambil fungsi 'supabase' yang sudah kamu buat di supabaseClient.js
 import supabase from './supabaseClient.js';
 
 const btnSimpan = document.getElementById('btnSimpan');
@@ -9,22 +8,27 @@ btnSimpan.addEventListener('click', async () => {
     const nama = inputNama.value;
     const kelas = inputKelas.value;
 
-    // Proses mengirim data ke Supabase
+    if (!nama || !kelas) {
+        alert("Nama dan Kelas tidak boleh kosong!");
+        return;
+    }
+
     const { data, error } = await supabase
-        .from('Perpus uji 1') // Harus sama persis dengan nama tabel di Supabase
+        .from('Perpus uji 1')
         .insert([
             { 
                 "Nama": nama, 
                 "Kelas": kelas, 
-                "Status Pinjam": "Bebas Pinjam" // Default saat pertama daftar
+                "Status Pinjam": "Bebas Pinjam" 
             }
-        ]);
+        ]); [cite: 4]
 
     if (error) {
         console.error('Gagal simpan:', error.message);
-        alert('Gagal menyimpan data!');
+        alert('Gagal menyimpan data: ' + error.message);
     } else {
-        alert('Data siswa berhasil disimpan!');
-        inputNama.value = ''; // Kosongkan input setelah berhasil
+        alert('Data siswa berhasil disimpan!'); [cite: 5]
+        inputNama.value = '';
+        inputKelas.value = '';
     }
 });
