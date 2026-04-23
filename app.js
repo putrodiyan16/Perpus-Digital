@@ -32,16 +32,17 @@ function mulaiScan() {
         { facingMode: "environment" },
         config,
         async (decodedText) => {
+            // Kita pastikan data scan berupa angka
             const idScanned = parseInt(decodedText);
             
             stopScanner();
 
-            // --- TAHAP 1: CARI DATA SISWA (TELITI DI SINI) ---
-            // Kita ganti 'id' menjadi 'ID_Siswa' sesuai gambar tabelmu
+            // --- TAHAP 1: CARI DATA SISWA ---
+            // Sesuai gambar: Nama tabel 'Perpus digital', kolom kunci 'ID_Siswa'
             const { data: dataSiswa, error: errorCari } = await client
                 .from('Perpus digital')
                 .select('"Nama Siswa", Kelas')
-                .eq('ID_Siswa', idScanned) // <--- SUDAH SAYA PERBAIKI
+                .eq('ID_Siswa', idScanned) 
                 .single();
 
             if (errorCari || !dataSiswa) {
@@ -51,17 +52,18 @@ function mulaiScan() {
             }
 
             // --- TAHAP 2: JIKA KETEMU, SIMPAN KE TABEL KEDATANGAN ---
+            // Sesuai gambar: Kolom di tabel Kedatangan bernama 'ID_Siswa'
             const { error: errorSimpan } = await client
                 .from('Kedatangan')
-                .insert([{ ID_Siswa: idScanned }]); // Sesuaikan huruf besar kecilnya
+                .insert([{ ID_Siswa: idScanned }]);
 
             if (errorSimpan) {
-                alert("Gagal mencatat: " + errorSimpan.message);
+                alert("Gagal mencatat kehadiran: " + errorSimpan.message);
             } else {
-                // TAHAP 3: MUNCULKAN NAMA ASLI
-                const namaSiswa = dataSiswa["Nama Siswa"];
-                const kelasSiswa = dataSiswa.Kelas;
-                alert("✅ ABSENSI BERHASIL\n\nNama: " + namaSiswa + "\nKelas: " + kelasSiswa);
+                // TAHAP 3: TAMPILKAN NAMA YANG BERHASIL DICARI
+                const namaKetemu = dataSiswa["Nama Siswa"];
+                const kelasKetemu = dataSiswa.Kelas;
+                alert("✅ ABSENSI BERHASIL\n\nSelamat Datang, " + namaKetemu + "!\nKelas: " + kelasKetemu);
             }
             
             kembaliKeMenu();
@@ -70,6 +72,17 @@ function mulaiScan() {
         console.error("Kamera bermasalah:", err);
     });
 }
+
+function stopScanner() {
+    if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().then(() => {
+            console.log("Scanner Berhenti.");
+        }).catch(err => {
+            console.error("Gagal stop scanner:", err);
+        });
+    }
+}
+
 // 5. LOGIKA REGISTRASI (Siswa Baru)
 const btnSimpan = document.getElementById('btnSimpan');
 if (btnSimpan) {
@@ -82,12 +95,14 @@ if (btnSimpan) {
             return;
         }
 
-        const { data, error } = await client
+        // Catatan: Karena kolom ID_Siswa di gambar kamu bertipe int8, 
+        // pastikan kamu juga menginputkan ID_Siswa saat registrasi jika tidak auto-increment.
+        const { error } = await client
             .from('Perpus digital') 
             .insert([{ "Nama Siswa": nama, "Kelas": kelas }]);
 
         if (error) {
-            alert("Error: " + error.message);
+            alert("Error Registrasi: " + error.message);
         } else {
             alert("Siswa Berhasil Terdaftar!");
             document.getElementById('namaSiswa').value = '';
