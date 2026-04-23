@@ -1,6 +1,5 @@
-// Mengimpor library Supabase (nanti kita ambil lewat CDN di HTML)
-const supabaseUrl = 'ISI_DENGAN_URL_KAMU';
-const supabaseKey = 'ISI_DENGAN_ANON_KEY_KAMU';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
