@@ -8,26 +8,31 @@ btnSimpan.addEventListener('click', async () => {
     const nama = inputNama.value;
     const kelas = inputKelas.value;
 
+    // 1. Validasi Input
     if (!nama || !kelas) {
-        alert("Nama dan Kelas tidak boleh kosong!");
+        alert("Mohon isi Nama dan Kelas terlebih dahulu!");
         return;
     }
 
+    // 2. Proses Simpan ke Supabase
+    // Saya sesuaikan "Nama Siswa" sesuai struktur tabel kamu [cite: 3, 4]
     const { data, error } = await supabase
         .from('Perpus uji 1')
         .insert([
             { 
-                "Nama": nama, 
-                "Kelas": kelas, 
-                "Status Pinjam": "Bebas Pinjam" 
+                "Nama Siswa": nama, 
+                "Kelas": kelas 
+                // Kolom "Status Pinjam" dihapus karena sudah tidak ada di database kamu
             }
-        ]); [cite: 4]
+        ]);
 
+    // 3. Penanganan Hasil
     if (error) {
-        console.error('Gagal simpan:', error.message);
-        alert('Gagal menyimpan data: ' + error.message);
+        console.error('Detail Error:', error);
+        alert('Gagal menyimpan: ' + error.message);
     } else {
-        alert('Data siswa berhasil disimpan!'); [cite: 5]
+        alert('Data siswa berhasil disimpan!');
+        // Kosongkan form agar bisa input data baru
         inputNama.value = '';
         inputKelas.value = '';
     }
