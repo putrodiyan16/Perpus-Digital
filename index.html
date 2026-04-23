@@ -36,8 +36,9 @@
 
         <div id="halaman-kedatangan" class="halaman hidden">
             <h2>Scan Barcode Kedatangan</h2>
-            <div class="placeholder-fitur">Fitur Scan Barcode sedang disiapkan...</div>
-            <button class="btn-back" onclick="kembaliKeMenu()">⬅ Kembali</button>
+            <div id="reader" style="width: 100%; border-radius: 10px; overflow: hidden; margin-bottom: 20px;"></div>
+            <div id="hasil-scan" style="margin-bottom: 15px; font-weight: bold; color: #2ecc71;"></div>
+            <button class="btn-back" onclick="stopScanner()">⬅ Kembali</button>
         </div>
 
         <div id="halaman-pinjam" class="halaman hidden">
@@ -48,6 +49,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="app.js"></script>
 </body>
 </html>
