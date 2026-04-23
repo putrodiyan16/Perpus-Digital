@@ -54,7 +54,7 @@ function mulaiScan() {
             // --- TAHAP 2: JIKA KETEMU, SIMPAN KE TABEL KEDATANGAN ---
             const { error: errorSimpan } = await client
                 .from('Kedatangan')
-                .insert([{ id_siswa: idScanned }]);
+                .insert([{ ID_Siswa: idScanned }]);
 
             if (errorSimpan) {
                 alert("Gagal mencatat: " + errorSimpan.message);
