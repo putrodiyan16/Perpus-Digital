@@ -1,43 +1,41 @@
-// Memanggil library Supabase dari window (karena pakai CDN di HTML)
-const { createClient } = window.supabase;
+const supabaseUrl = 'URL_SUPABASE_KAMU';
+const supabaseKey = 'KEY_SUPABASE_KAMU';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-// Masukkan URL dan Key kamu secara langsung (Hardcoded)
-const supabaseUrl = 'https://vdkjyvdfddybtmyytqdx.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZka2p5dmRmZGR5YnRteXl0cWR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MzE1MjUsImV4cCI6MjA5MjUwNzUyNX0.jT72qRw6-AbO4vTZb5P5H7rOPZLYhOrkKcRHSfSc5wI';
+// Fungsi Pindah Halaman
+function tampilkanHalaman(idHalaman) {
+    document.getElementById('menu-utama').classList.add('hidden');
+    document.querySelectorAll('.halaman').forEach(h => h.classList.add('hidden'));
+    document.getElementById(idHalaman).classList.remove('hidden');
+}
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+function kembaliKeMenu() {
+    document.querySelectorAll('.halaman').forEach(h => h.classList.add('hidden'));
+    document.getElementById('menu-utama').classList.remove('hidden');
+}
 
+// Logika Simpan Registrasi (Yang sudah kita tes berhasil)
 const btnSimpan = document.getElementById('btnSimpan');
-const inputNama = document.getElementById('namaSiswa');
-const inputKelas = document.getElementById('kelasSiswa');
-
 btnSimpan.addEventListener('click', async () => {
-    const nama = inputNama.value;
-    const kelas = inputKelas.value;
+    const nama = document.getElementById('namaSiswa').value;
+    const kelas = document.getElementById('kelasSiswa').value;
 
-    if (!nama || !kelas) {
-        alert("Nama dan Kelas tidak boleh kosong!");
+    if(!nama || !kelas) {
+        alert("Isi nama dan kelas dulu ya!");
         return;
     }
 
-    console.log("Sedang mencoba mengirim data ke Supabase...");
-
     const { data, error } = await supabase
-        .from('Perpus digital')
-        .insert([
-            { 
-                "Nama Siswa": nama, 
-                "Kelas": kelas 
-            }
-        ]);
+        .from('Perpus digital') // Sesuaikan dengan nama tabel barumu jika berubah
+        .insert([{ "Nama Siswa": nama, "Kelas": kelas }]);
 
     if (error) {
-        console.error('Ada Error:', error.message);
-        alert('Gagal simpan: ' + error.message);
+        console.error(error);
+        alert("Gagal simpan: " + error.message);
     } else {
-        console.log('Berhasil:', data);
-        alert('Data ' + nama + ' berhasil masuk ke Supabase!');
-        inputNama.value = '';
-        inputKelas.value = '';
+        alert("Data siswa berhasil disimpan! ID otomatis telah dibuat di sistem.");
+        document.getElementById('namaSiswa').value = '';
+        document.getElementById('kelasSiswa').value = '';
+        kembaliKeMenu();
     }
 });
