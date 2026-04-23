@@ -32,35 +32,33 @@ function mulaiScan() {
         { facingMode: "environment" },
         config,
         async (decodedText) => {
-            // Kita pastikan data scan berupa angka
             const idScanned = parseInt(decodedText);
-            
             stopScanner();
 
             // --- TAHAP 1: CARI DATA SISWA ---
-            // Sesuai gambar: Nama tabel 'Perpus digital', kolom kunci 'ID_Siswa'
+            // PERBAIKAN: Gunakan kutip dua pada "ID_Siswa" agar case-sensitive
             const { data: dataSiswa, error: errorCari } = await client
                 .from('Perpus digital')
-                .select('"Nama Siswa", Kelas')
+                .select('"Nama Siswa", Kelas, ID_Siswa')
                 .eq('ID_Siswa', idScanned) 
                 .single();
 
             if (errorCari || !dataSiswa) {
-                alert("Waduh! ID " + idScanned + " tidak ditemukan di data siswa. Silakan registrasi dulu.");
+                console.error("Detail Error:", errorCari);
+                alert("Waduh! ID " + idScanned + " tidak ditemukan di data siswa.\nPeriksa apakah ID sudah terdaftar di tab Perpus digital.");
                 kembaliKeMenu();
                 return;
             }
 
             // --- TAHAP 2: JIKA KETEMU, SIMPAN KE TABEL KEDATANGAN ---
-            // Sesuai gambar: Kolom di tabel Kedatangan bernama 'ID_Siswa'
             const { error: errorSimpan } = await client
                 .from('Kedatangan')
-                .insert([{ ID_Siswa: idScanned }]);
+                .insert([{ "ID_Siswa": idScanned }]);
 
             if (errorSimpan) {
                 alert("Gagal mencatat kehadiran: " + errorSimpan.message);
             } else {
-                // TAHAP 3: TAMPILKAN NAMA YANG BERHASIL DICARI
+                // TAHAP 3: TAMPILKAN NAMA ASLI
                 const namaKetemu = dataSiswa["Nama Siswa"];
                 const kelasKetemu = dataSiswa.Kelas;
                 alert("✅ ABSENSI BERHASIL\n\nSelamat Datang, " + namaKetemu + "!\nKelas: " + kelasKetemu);
@@ -89,17 +87,22 @@ if (btnSimpan) {
     btnSimpan.addEventListener('click', async () => {
         const nama = document.getElementById('namaSiswa').value;
         const kelas = document.getElementById('kelasSiswa').value;
+        
+        // Agar bisa discan, saat daftar kita harus masukkan ID 6 angka secara manual
+        const idInput = prompt("Masukkan 6 Digit ID untuk siswa ini:");
 
-        if(!nama || !kelas) {
-            alert("Isi nama dan kelas dulu!");
+        if(!nama || !kelas || !idInput) {
+            alert("Data tidak lengkap!");
             return;
         }
 
-        // Catatan: Karena kolom ID_Siswa di gambar kamu bertipe int8, 
-        // pastikan kamu juga menginputkan ID_Siswa saat registrasi jika tidak auto-increment.
         const { error } = await client
             .from('Perpus digital') 
-            .insert([{ "Nama Siswa": nama, "Kelas": kelas }]);
+            .insert([{ 
+                "Nama Siswa": nama, 
+                "Kelas": kelas, 
+                "ID_Siswa": parseInt(idInput) 
+            }]);
 
         if (error) {
             alert("Error Registrasi: " + error.message);
