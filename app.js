@@ -1,4 +1,4 @@
-// Ganti dengan URL dan Key milikmu
+// 1. KONFIGURASI SUPABASE
 const supabaseUrl = 'https://vdkjyvdfddybtmyytqdx.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZka2p5dmRmZGR5YnRteXl0cWR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MzE1MjUsImV4cCI6MjA5MjUwNzUyNX0.jT72qRw6-AbO4vTZb5P5H7rOPZLYhOrkKcRHSfSc5wI';
 const client = supabase.createClient(supabaseUrl, supabaseKey);
@@ -8,14 +8,11 @@ let html5QrCode;
 
 // 3. FUNGSI NAVIGASI HALAMAN
 async function tampilkanHalaman(idHalaman) {
-    // Sembunyikan semua halaman
     document.getElementById('menu-utama').classList.add('hidden');
     document.querySelectorAll('.halaman').forEach(h => h.classList.add('hidden'));
     
-    // Tampilkan halaman yang dituju
     document.getElementById(idHalaman).classList.remove('hidden');
 
-    // Jika masuk ke halaman scan, nyalakan kamera
     if (idHalaman === 'halaman-kedatangan') {
         mulaiScan();
     }
@@ -40,13 +37,13 @@ function mulaiScan() {
             // Berhenti scan agar tidak berulang-ulang
             stopScanner();
 
-            // --- TAHAP 1: CARI NAMA SISWA ---
-            // Kita minta Supabase mencari baris yang ID-nya cocok dengan hasil scan
+            // --- TAHAP 1: CARI DATA SISWA ---
+            // Menggunakan tanda kutip dua " " di dalam string select untuk kolom dengan spasi
             const { data: dataSiswa, error: errorCari } = await client
                 .from('Perpus digital')
-                .select('Nama Siswa, Kelas')
+                .select('"Nama Siswa", Kelas')
                 .eq('id', idScanned) 
-                .single(); // Kita hanya butuh 1 data saja
+                .single();
 
             if (errorCari || !dataSiswa) {
                 alert("Waduh! ID " + idScanned + " tidak ditemukan di data siswa. Silakan registrasi dulu.");
@@ -54,7 +51,7 @@ function mulaiScan() {
                 return;
             }
 
-            // --- TAHAP 2: JIKA KETEMU, BARU SIMPAN KE TABEL KEDATANGAN ---
+            // --- TAHAP 2: JIKA KETEMU, SIMPAN KE TABEL KEDATANGAN ---
             const { error: errorSimpan } = await client
                 .from('Kedatangan')
                 .insert([{ id_siswa: idScanned }]);
@@ -62,8 +59,10 @@ function mulaiScan() {
             if (errorSimpan) {
                 alert("Gagal mencatat: " + errorSimpan.message);
             } else {
-                // TAHAP 3: MUNCULKAN NAMA DI LAYAR
-                alert("Selamat Datang, " + dataSiswa['Nama Siswa'] + "!\nKelas: " + dataSiswa.Kelas);
+                // TAHAP 3: MUNCULKAN NAMA ASLI DI LAYAR
+                const namaSiswa = dataSiswa["Nama Siswa"];
+                const kelasSiswa = dataSiswa.Kelas;
+                alert("✅ ABSENSI BERHASIL\n\nSelamat Datang, " + namaSiswa + "!\nKelas: " + kelasSiswa);
             }
             
             kembaliKeMenu();
@@ -73,18 +72,13 @@ function mulaiScan() {
     });
 }
 
-// INI FUNGSI YANG TADI HILANG/BELUM ADA
 function stopScanner() {
     if (html5QrCode && html5QrCode.isScanning) {
         html5QrCode.stop().then(() => {
             console.log("Scanner Berhenti.");
-            kembaliKeMenu();
         }).catch(err => {
             console.error("Gagal stop scanner:", err);
-            kembaliKeMenu(); // Tetap balik ke menu meski gagal stop
         });
-    } else {
-        kembaliKeMenu();
     }
 }
 
