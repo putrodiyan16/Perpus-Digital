@@ -28,32 +28,48 @@ function kembaliKeMenu() {
 
 // 4. FUNGSI KHUSUS SCANNER
 function mulaiScan() {
-    // Pastikan area 'reader' ada sebelum mulai
     html5QrCode = new Html5Qrcode("reader");
-    const config = { fps: 10, qrbox: { width: 250, height: 150 } };
+    const config = { fps: 15, qrbox: { width: 250, height: 250 } };
 
     html5QrCode.start(
-        { facingMode: "environment" }, // Pakai kamera belakang
+        { facingMode: "environment" },
         config,
         async (decodedText) => {
-            document.getElementById('hasil-scan').innerText = "Berhasil Scan: " + decodedText;
+            const idScanned = parseInt(decodedText);
             
-            // Berhenti setelah berhasil scan agar tidak duplikat
+            // Berhenti scan agar tidak berulang-ulang
             stopScanner();
 
-            // Simpan ke tabel Kedatangan
-            const { error } = await client
-                .from('Kedatangan')
-                .insert([{ id_siswa: parseInt(decodedText) }]);
+            // --- TAHAP 1: CARI NAMA SISWA ---
+            // Kita minta Supabase mencari baris yang ID-nya cocok dengan hasil scan
+            const { data: dataSiswa, error: errorCari } = await client
+                .from('Perpus digital')
+                .select('Nama Siswa, Kelas')
+                .eq('id', idScanned) 
+                .single(); // Kita hanya butuh 1 data saja
 
-            if (error) {
-                alert("Gagal mencatat kehadiran: " + error.message);
-            } else {
-                alert("Absensi Berhasil! ID: " + decodedText);
+            if (errorCari || !dataSiswa) {
+                alert("Waduh! ID " + idScanned + " tidak ditemukan di data siswa. Silakan registrasi dulu.");
+                kembaliKeMenu();
+                return;
             }
+
+            // --- TAHAP 2: JIKA KETEMU, BARU SIMPAN KE TABEL KEDATANGAN ---
+            const { error: errorSimpan } = await client
+                .from('Kedatangan')
+                .insert([{ id_siswa: idScanned }]);
+
+            if (errorSimpan) {
+                alert("Gagal mencatat: " + errorSimpan.message);
+            } else {
+                // TAHAP 3: MUNCULKAN NAMA DI LAYAR
+                alert("Selamat Datang, " + dataSiswa['Nama Siswa'] + "!\nKelas: " + dataSiswa.Kelas);
+            }
+            
+            kembaliKeMenu();
         }
     ).catch(err => {
-        console.error("Kamera gagal dimulai:", err);
+        console.error("Kamera bermasalah:", err);
     });
 }
 
