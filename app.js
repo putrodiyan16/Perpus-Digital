@@ -1,4 +1,12 @@
-import supabase from './supabaseClient.js';
+// Kita panggil langsung dari window karena menggunakan CDN di index.html
+const { createClient } = window.supabase;
+
+// Ambil URL dan Key dari Environment Variables Netlify
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Buat koneksi
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const btnSimpan = document.getElementById('btnSimpan');
 const inputNama = document.getElementById('namaSiswa');
@@ -8,31 +16,28 @@ btnSimpan.addEventListener('click', async () => {
     const nama = inputNama.value;
     const kelas = inputKelas.value;
 
-    // 1. Validasi Input
     if (!nama || !kelas) {
-        alert("Mohon isi Nama dan Kelas terlebih dahulu!");
+        alert("Mohon isi Nama dan Kelas!");
         return;
     }
 
-    // 2. Proses Simpan ke Supabase
-    // Saya sesuaikan "Nama Siswa" sesuai struktur tabel kamu [cite: 3, 4]
+    console.log("Mencoba mengirim data..."); // Cek di console browser
+
     const { data, error } = await supabase
         .from('Perpus uji 1')
         .insert([
             { 
                 "Nama Siswa": nama, 
                 "Kelas": kelas 
-                // Kolom "Status Pinjam" dihapus karena sudah tidak ada di database kamu
             }
         ]);
 
-    // 3. Penanganan Hasil
     if (error) {
-        console.error('Detail Error:', error);
-        alert('Gagal menyimpan: ' + error.message);
+        console.error('Error detail:', error);
+        alert('Gagal: ' + error.message);
     } else {
+        console.log('Hasil:', data);
         alert('Data siswa berhasil disimpan!');
-        // Kosongkan form agar bisa input data baru
         inputNama.value = '';
         inputKelas.value = '';
     }
