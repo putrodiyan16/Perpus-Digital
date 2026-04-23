@@ -3,18 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perpustakaan Digital</title>
+    <title>Sistem Perpustakaan Digital</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Sistem Perpustakaan</h1>
-    <div id="app">
-        <input type="text" id="namaSiswa" placeholder="Nama Siswa">
-        <input type="text" id="kelasSiswa" placeholder="Kelas (Contoh: 10-A)"> 
-        <button id="btnSimpan">Simpan ke Supabase</button>
+    <div class="container">
+        <h1>Perpustakaan Ilmu</h1>
+        <p class="motto">"Ilmu menyatu, doa merestu"</p>
+
+        <div id="menu-utama" class="menu-grid">
+            <button class="btn-menu" onclick="tampilkanHalaman('halaman-registrasi')">
+                <span class="icon">📝</span>
+                <span>Registrasi Siswa</span>
+            </button>
+            <button class="btn-menu" onclick="tampilkanHalaman('halaman-kedatangan')">
+                <span class="icon">📸</span>
+                <span>Kedatangan (Scan)</span>
+            </button>
+            <button class="btn-menu" onclick="tampilkanHalaman('halaman-pinjam')">
+                <span class="icon">📚</span>
+                <span>Pinjam Buku</span>
+            </button>
+        </div>
+
+        <div id="halaman-registrasi" class="halaman hidden">
+            <h2>Registrasi Siswa Baru</h2>
+            <input type="text" id="namaSiswa" placeholder="Nama Lengkap Siswa">
+            <input type="text" id="kelasSiswa" placeholder="Kelas (Contoh: 10 IPA 1)">
+            <button id="btnSimpan" class="btn-aksi">Simpan ke Supabase</button>
+            <button class="btn-back" onclick="kembaliKeMenu()">⬅ Kembali</button>
+        </div>
+
+        <div id="halaman-kedatangan" class="halaman hidden">
+            <h2>Scan Barcode Kedatangan</h2>
+            <div class="placeholder-fitur">Fitur Scan Barcode sedang disiapkan...</div>
+            <button class="btn-back" onclick="kembaliKeMenu()">⬅ Kembali</button>
+        </div>
+
+        <div id="halaman-pinjam" class="halaman hidden">
+            <h2>Peminjaman Buku</h2>
+            <div class="placeholder-fitur">Fitur Peminjaman sedang disiapkan...</div>
+            <button class="btn-back" onclick="kembaliKeMenu()">⬅ Kembali</button>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script type="module" src="app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
