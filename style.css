@@ -88,7 +88,13 @@ input {
 }
 
 .logo-sekolah {
-    width: 200px;            /* Ukuran lebar logo (bisa kamu ganti misal 120px) */
-    height: auto;            /* Tinggi otomatis mengikuti lebar agar tidak gepeng */
-    object-fit: contain;     /* Memastikan gambar tetap proporsional */
+    /* Gunakan lebar maksimal agar di HP tidak kekecilan tapi di Laptop tidak kebesaran */
+    width: 60%;            /* Di HP, dia akan mengambil 60% lebar kotak putih */
+    max-width: 200px;      /* Di Laptop, dia tidak akan lebih besar dari 200px */
+    
+    height: auto;
+    display: block;        /* Memastikan dia dianggap sebagai blok agar margin auto jalan */
+    margin: 0 auto;        /* Memastikan posisi tetap di tengah */
+    object-fit: contain;
+    padding-bottom: 10px;
 }
