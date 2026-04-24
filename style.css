@@ -90,7 +90,7 @@ input {
 .logo-sekolah {
     /* Gunakan lebar maksimal agar di HP tidak kekecilan tapi di Laptop tidak kebesaran */
     width: 60%;            /* Di HP, dia akan mengambil 60% lebar kotak putih */
-    max-width: 200px;      /* Di Laptop, dia tidak akan lebih besar dari 200px */
+    max-width: 150px;      /* Di Laptop, dia tidak akan lebih besar dari 200px */
     
     height: auto;
     display: block;        /* Memastikan dia dianggap sebagai blok agar margin auto jalan */
