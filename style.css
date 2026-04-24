@@ -88,7 +88,7 @@ input {
 }
 
 .logo-sekolah {
-    width: 130px;            /* Ukuran lebar logo (bisa kamu ganti misal 120px) */
+    width: 200px;            /* Ukuran lebar logo (bisa kamu ganti misal 120px) */
     height: auto;            /* Tinggi otomatis mengikuti lebar agar tidak gepeng */
     object-fit: contain;     /* Memastikan gambar tetap proporsional */
 }
